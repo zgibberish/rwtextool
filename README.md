@@ -1,2 +1,3 @@
-# rw-textool
-Texture packer for Rotwood (WIP)
+# Rotwood TEX Tool
+
+A texture packer+converter for Rotwood (WIP)
