@@ -1,7 +1,6 @@
 import os
 from PIL import Image
 import xml.etree.ElementTree as ET
-from pprint import pprint
 
 MAGIC = b"KTEX\x02\x00\x08\x00\x08"
 

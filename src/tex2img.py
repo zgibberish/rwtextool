@@ -13,7 +13,6 @@ args = parser.parse_args()
 
 tex_path = args.tex_path
 auto_atlas = args.auto_atlas
-print(auto_atlas)
 atlas_path = None
 if auto_atlas:
     atlas_path = os.path.splitext(tex_path)[0]+".xml"
