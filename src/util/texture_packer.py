@@ -1,6 +1,7 @@
 import PyTexturePacker.Packer
 import xml.etree.ElementTree as ET
 import os
+import util.logger as logger
 
 png_paths = []
 
@@ -30,10 +31,13 @@ def xml_atlas_handler(atlasinfo, filepath):
     filepath_atlas = filepath_base + ".xml"
     filepath_png = filepath_base + ".png"
     filepath_tex = filepath_base + ".tex"
+    logger.info2(f"Packed image: {filepath_png}")
+    logger.info2(f"Generating atlas: {filepath_atlas}")
 
     sprite_list = []
     frames = atlasinfo["frames"]
     for texture in frames:
+        logger.info2(f"Texture: {texture}", 1)
         sprite_list.append({
             "name":texture,
             "data":frames[texture]["frame"]
