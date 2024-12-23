@@ -1,7 +1,7 @@
 import sys
 import os.path
 import argparse
-from util.texconvert import tex_to_png
+import util.texconvert
 
 parser = argparse.ArgumentParser(
     description="Unpacks a Rotwood Klei TEX file (and XML atlas) to PNG images.",
@@ -20,12 +20,12 @@ else:
     atlas_path = args.atlas_path
 
 failed = False
-if not os.path.isfile(tex_path):
-    print("tex does not exist")
-    failed = True
 if (atlas_path != None) and (not os.path.isfile(atlas_path)):
-    print("atlas does not exist")
+    print("warning: atlas does not exist")
     atlas_path = None
+if not os.path.isfile(tex_path):
+    print("failed: tex does not exist")
+    failed = True
 if failed: exit(1)
 
-tex_to_png(tex_path=tex_path, atlas_path=atlas_path)
+util.texconvert.tex_to_png(tex_path=tex_path, atlas_path=atlas_path)

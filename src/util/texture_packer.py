@@ -1,4 +1,4 @@
-from PyTexturePacker import Packer
+import PyTexturePacker.Packer
 import xml.etree.ElementTree as ET
 import os
 
@@ -77,7 +77,7 @@ def xml_atlas_handler(atlasinfo, filepath):
     png_paths.append(filepath_png)
 
 def pack(source_dir):
-    packer = Packer.create(
+    packer = PyTexturePacker.Packer.create(
         texture_format=".png",
         atlas_format=xml_atlas_handler,
         max_width=2048,
