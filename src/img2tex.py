@@ -16,6 +16,10 @@ if not os.path.exists(source_path):
     print("failed: directory does not exist")
     exit(1)
 
+# remove trailing slashes
+source_path = str(source_path).removesuffix("/")
+source_path = str(source_path).removesuffix("\\")
+
 png_files = util.texture_packer.pack(source_path)
 for png in png_files:
     util.texconvert.png_to_tex(png)
