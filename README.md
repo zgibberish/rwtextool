@@ -1,10 +1,10 @@
 # Rotwood TEX Tool
 
-KTEX texture packer+converter for Rotwood
+KTEX texture packer+converter for [Rotwood](https://store.steampowered.com/app/2015270/Rotwood/).
 
 ## Requirements
 
-- Python
+- Python 3.12+
 - `PyTexturePacker` and `pillow` Python modules
 
 ## Usage
