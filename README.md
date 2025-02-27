@@ -5,7 +5,7 @@ KTEX texture packer+converter for [Rotwood](https://store.steampowered.com/app/2
 ## Requirements
 
 - Python 3.12+
-- `PyTexturePacker` and `pillow` Python modules
+- `PyTexturePacker` and `Wand` Python modules
 
 ## Usage
 
