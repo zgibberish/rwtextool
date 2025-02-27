@@ -1,9 +1,24 @@
 import os
-import PIL.Image
+# import PIL.Image
+import wand.image
 import xml.etree.ElementTree as ET
 import util.logger as logger
+import math
 
-MAGIC = b"KTEX\x02\x00\x08\x00\x08"
+MAGIC = b'KTEX'
+
+def dimension_to_header_byte_pair(length):
+    first_byte = None
+    second_byte = None
+
+    if length >= 256:
+        first_byte = 0
+        second_byte = length // 256
+    else:
+        first_byte = length
+        second_byte = 0
+
+    return (first_byte, second_byte)
 
 def png_to_tex(png_path): # .png input file
     success = True
@@ -14,19 +29,35 @@ def png_to_tex(png_path): # .png input file
     filepath_tex = filepath_base + ".tex"
 
     try:
+        # for use later when generating ktex header
+        width = None
+        height = None
+
         # apply dxt5 compression to png save to a temp file,
         # then write the image data from said temp file to .tex
         # and remove the temp file
-        with PIL.Image.open(png_path) as png:
+        with wand.image.Image(filename=png_path) as png:
+            width, height = png.size
+
             logger.info2(f"Converting png to dds (dxt5): {png_path} -> {filepath_dds}")
             png.compression = 'dxt5'
-            png.save(filepath_dds)
+            png.save(filename=filepath_dds)
         img_dds = open(filepath_dds, "rb")
         img_tex = open(filepath_tex, "wb")
         image_data = img_dds.read()
-        logger.info2(f"Writing dds image data to TEX: {filepath_dds} -> {filepath_tex}")
-        img_tex.write(MAGIC + image_data)
         img_dds.close()
+
+        logger.info2(f"Writing dds image data to TEX: {filepath_dds} -> {filepath_tex}")
+        
+        # header
+        img_tex.write(MAGIC)
+        dimensions = [2] # first byte is always 2
+        for b in dimension_to_header_byte_pair(width): dimensions.append(b)
+        for b in dimension_to_header_byte_pair(height): dimensions.append(b)
+        for b in dimensions: img_tex.write(int.to_bytes(b))
+        # data
+        img_tex.write(image_data)
+        
         img_tex.close()
     except:
         logger.error("Invalid image data")
@@ -51,16 +82,16 @@ def tex_to_png(tex_path, atlas_path=None): # .tex input file
         # back to png, and remove said temp file
         img_tex = open(tex_path, 'rb')
         img_dds = open(filepath_dds, 'wb')
-        img_tex.seek(len(MAGIC))
+        img_tex.seek(4+5)
         image_data = img_tex.read()
         logger.info2(f"Extracting TEX image data -> {filepath_dds}")
         img_dds.write(image_data)
         img_tex.close()
         img_dds.close()
-        with PIL.Image.open(filepath_dds) as dds:
+        with wand.image.Image(filename=filepath_dds) as dds:
             logger.info2(f"Converting dds to png: {filepath_dds} -> {filepath_png}")
             dds.compression = "no"
-            dds.save(filepath_png)
+            dds.save(filename=filepath_png)
     except:
         logger.error("Invalid image data")
         success = False
@@ -70,7 +101,7 @@ def tex_to_png(tex_path, atlas_path=None): # .tex input file
 
     if success and atlas_path != None:
         logger.info2(f"Unpacking image with atlas: {atlas_path}")
-        png = PIL.Image.open(filepath_png)
+        png = wand.image.Image(filename=filepath_png)
         w, h = png.size
 
         os.makedirs(filepath_base, exist_ok=True)
@@ -83,10 +114,17 @@ def tex_to_png(tex_path, atlas_path=None): # .tex input file
             v1 = float(element.attrib["v1"])
             u2 = float(element.attrib["u2"])
             v2 = float(element.attrib["v2"])
-            box = (u1*w, v2*h, u2*w, v1*h)
+
+            crop_left = math.floor(u1*w)
+            crop_top = math.floor(v2*h)
+            crop_right = math.floor(u2*w)
+            crop_bottom = math.floor(v1*h)
+            
             filename = f"{filepath_base}/{name_base}.png"
             logger.info2(f"Saving texture: {filename}", 1)
-            png.crop(box).save(filename)
+
+            with png[crop_left:crop_right, crop_top:crop_bottom] as cropped:
+                cropped.save(filename=filename)
 
         png.close()
 
