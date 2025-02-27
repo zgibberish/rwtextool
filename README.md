@@ -11,7 +11,7 @@ KTEX texture packer+converter for [Rotwood](https://store.steampowered.com/app/2
 
 ### Packing PNGs into TEX+XML
 
-```shell
+```txt
 usage: img2tex.py [-h] [-v] source_path
 
 Packs a directory of PNG images into Rotwood Klei TEX textures and atlases.
@@ -26,7 +26,7 @@ options:
 
 ### Unpacking TEX+XML to PNGs
 
-```shell
+```txt
 usage: tex2img.py [-h] [-A] [-a ATLAS_PATH] [-v] tex_path
 
 Unpacks a Rotwood Klei TEX file (and XML atlas) to PNG images.
