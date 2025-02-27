@@ -12,16 +12,13 @@ def map_xywh_uv(x, y, w, h, canvas_w, canvas_h):
     xmax = x+w
     ymax = y+h
 
-    ATLAS_PIXEL_THRESHOLD = 0.5
-    u_margin = ATLAS_PIXEL_THRESHOLD / canvas_w
-    v_margin = ATLAS_PIXEL_THRESHOLD / canvas_h
     u_factor = 1 / canvas_w
     v_factor = 1 / canvas_h
 
-    u1 = x * u_factor + u_margin
-    v1 = ymax * v_factor - v_margin
-    u2 = xmax * u_factor - u_margin
-    v2 = y * v_factor + v_margin
+    u1 = x * u_factor
+    v1 = ymax * v_factor
+    u2 = xmax * u_factor
+    v2 = y * v_factor
 
     return u1, v1, u2, v2
 
